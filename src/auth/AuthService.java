@@ -1,36 +1,26 @@
 package auth;
 
+
 public class AuthService {
 
+    private UserDAO userDAO;
 
-	    private UserDAO userDAO = new UserDAO();
+    public AuthService(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
 
-	    /**
-	     * Validates user credentials
-	     */
-	    public boolean authenticate(String username, String password) {
-	        User user = userDAO.findByUsername(username);
-	        return user != null && user.getPassword().equals(password);
-	    }
+    // Credential validation
+    public boolean authenticate(String username, String password) {
+        User user = userDAO.findByUsername(username);
+        if (user == null) return false;
+        return user.getPassword().equals(password);
+    }
 
-	    /**
-	     * Changes user password after validation
-	     */
-	    public boolean changePassword(int userId, String oldPassword, String newPassword) {
-	        for (User user : userDAO.users.values()) {
-	            if (user.getUserId() == userId && user.getPassword().equals(oldPassword)) {
-	                return userDAO.updatePassword(userId, newPassword);
-	            }
-	        }
-	        return false;
-	    }
-
-	    /**
-	     * Adds demo user
-	     */
-	    public void addSampleUser() {
-	        userDAO.saveUser(new User(1, "admin", "admin123"));
-	    }
-	}
-
+    // Password management
+    public boolean changePassword(int userId, String oldPassword, String newPassword) {
+        User user = userDAO.findByUsername(
+                userDAO.findByUsername("").getUsername()
+        );
+        return userDAO.updatePassword(userId, newPassword);
+    }
 }
