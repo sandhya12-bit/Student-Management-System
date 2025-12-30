@@ -1,39 +1,32 @@
 package auth;
 
 public class User {
+    private int userId;
+    private String username;
+    private String password;
 
+    // Constructor
+    public User(int userId, String username, String password) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+    }
 
-	    private int userId;
-	    private String username;
-	    private String password;
+    // Getters
+    public int getUserId() {
+        return userId;
+    }
 
-	    /**
-	     * Constructor for User
-	     */
-	    public User(int userId, String username, String password) {
-	        this.userId = userId;
-	        this.username = username;
-	        this.password = password;
-	    }
+    public String getUsername() {
+        return username;
+    }
 
-	    /** @return user ID */
-	    public int getUserId() {
-	        return userId;
-	    }
+    public String getPassword() {
+        return password;
+    }
 
-	    /** @return username */
-	    public String getUsername() {
-	        return username;
-	    }
-
-	    /** @return password */
-	    public String getPassword() {
-	        return password;
-	    }
-
-	    /** @param password new password */
-	    public void setPassword(String password) {
-	        this.password = password;
-	    }
-	
+    // Setter for password
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

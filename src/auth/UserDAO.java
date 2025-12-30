@@ -1,54 +1,77 @@
+
 package auth;
 
-public class UserDAO {
+	import java.sql.*;
 
-	package auth;
-
-	import java.sql.Connection;
-	import java.util.HashMap;
-
-	/**
-	 * Data Access Object for User
-	 */
 	public class UserDAO {
+	    private Connection connection;
 
-	    private Connection connection; // For real DB use
-	    private HashMap<String, User> users = new HashMap<>();
+	    public UserDAO(Connection connection) {
+	        this.connection = connection;
+	    }
 
-	    /**
-	     * Finds user by username
-	     */
+	    // Find user by username
 	    public User findByUsername(String username) {
-	        return users.get(username);
-	    }
+	        try {
+	            String sql = "SELECT * FROM users WHERE username = ?";
+	            PreparedStatement ps = connection.prepareStatement(sql);
+	            ps.setString(1, username);
 
-	    /**
-	     * Saves a new user
-	     */
-	    public boolean saveUser(User user) {
-	        users.put(user.getUsername(), user);
-	        return true;
-	    }
-
-	    /**
-	     * Updates user password
-	     */
-	    public boolean updatePassword(int userId, String newPassword) {
-	        for (User user : users.values()) {
-	            if (user.getUserId() == userId) {
-	                user.setPassword(newPassword);
-	                return true;
+	            ResultSet rs = ps.executeQuery();
+	            if (rs.next()) {
+	                return new User(
+	                        rs.getInt("user_id"),
+	                        rs.getString("username"),
+	                        rs.getString("password")
+	                );
 	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return null;
+	    }
+
+	    // Save new user
+	    public boolean saveUser(User user) {
+	        try {
+	            String sql = "INSERT INTO users(username, password) VALUES (?, ?)";
+	            PreparedStatement ps = connection.prepareStatement(sql);
+	            ps.setString(1, user.getUsername());
+	            ps.setString(2, user.getPassword());
+
+	            return ps.executeUpdate() > 0;
+	        } catch (Exception e) {
+	            e.printStackTrace();
 	        }
 	        return false;
 	    }
 
-	    /**
-	     * Deletes a user
-	     */
+	    // Update password
+	    public boolean updatePassword(int userId, String newPassword) {
+	        try {
+	            String sql = "UPDATE users SET password = ? WHERE user_id = ?";
+	            PreparedStatement ps = connection.prepareStatement(sql);
+	            ps.setString(1, newPassword);
+	            ps.setInt(2, userId);
+
+	            return ps.executeUpdate() > 0;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return false;
+	    }
+
+	    // Delete user
 	    public boolean deleteUser(int userId) {
-	        return users.values().removeIf(user -> user.getUserId() == userId);
+	        try {
+	            String sql = "DELETE FROM users WHERE user_id = ?";
+	            PreparedStatement ps = connection.prepareStatement(sql);
+	            ps.setInt(1, userId);
+
+	            return ps.executeUpdate() > 0;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return false;
 	    }
 	}
-
-
